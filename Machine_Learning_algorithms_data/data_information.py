@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 class DataDescription():
 
@@ -24,3 +26,18 @@ class DataDescription():
         dataset_null_values = df.isnull().sum()
 
         return df, dataset_head, dataset_describe, dataset_info, dataset_null_values
+    
+    def plot_classification_in_seaborn(dataset, column_name_1, column_name_2):
+        """
+        This function plot the two values from the dataset to do classification\n
+        Then it will also plot the graph hence no need to put extra plt.show() in code
+        Arguments:
+            dataset : dataset in csv format
+            column_name_1: choose the column from dataset
+            column_name_2: choose the second column from the dataset for comarision
+
+        Return:
+            changed column with numerical value
+        """
+        sns.countplot(x='{}'.format(column_name_1), hue='{}'.format(column_name_2), data=dataset)
+        plt.show()
