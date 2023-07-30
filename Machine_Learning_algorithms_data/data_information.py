@@ -13,11 +13,11 @@ class DataDescription():
         This function take the input of the csv file and then read the required data
 
         Return:
-            df = dataset
-            dataset_head = head values of the table
-            dataset_describe = description of the dataset
-            dataset_info = info of all columns as well as null values
-            dataset_null_values = total null values in that column
+            df = dataset\n
+            dataset_head = head values of the table\n
+            dataset_describe = description of the dataset\n
+            dataset_info = info of all columns as well as null values\n
+            dataset_null_values = total null values in that column\n
         '''
         df = pd.read_csv(self.csv_file_path)
         dataset_head = df.head()
