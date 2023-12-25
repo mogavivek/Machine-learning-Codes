@@ -81,6 +81,7 @@ class HandDetactor():
                     height, width, channel = self.webcam_image.shape
                     center_x, center_y = int(land_mark.x*width), int(land_mark.y*height)
                     land_mark_list.append([id, center_x, center_y])
+                    
             return land_mark_list
         except:
             return Exception("Failed to detect the positions of the dots")        
@@ -98,8 +99,8 @@ class HandDetactor():
             for id, land_mark in enumerate(my_hand.landmark):
                 height, width, channel = self.webcam_image.shape
                 center_x, center_y = int(land_mark.x*width), int(land_mark.y*height)
-            if id == provide_dot_number:
-                cv2.circle(self.webcam_image, (center_x, center_y), 20, (255, 0, 255), cv2.FILLED)
+                if(id == provide_dot_number):
+                    cv2.circle(self.webcam_image, (center_x, center_y), 20, (255, 0, 255), cv2.FILLED)
         except:
             return Exception("Failed to locate the circle of selected point on hand")
 

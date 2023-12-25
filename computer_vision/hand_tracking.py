@@ -13,7 +13,6 @@ while True:
     hand_tracking = cv_tracking.HandDetactor(img, imgRGB)
     img = hand_tracking.hand_dots_and_lines()    
     landmark_list = hand_tracking.find_dots_mark_position()
-    hand_tracking.check_dots_showing_correct_value(4)
     if(len(landmark_list) != 0):
         print(landmark_list[4])
 
