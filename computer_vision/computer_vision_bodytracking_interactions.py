@@ -1,6 +1,9 @@
 import cv2
 import mediapipe as mp
 import time 
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 
 class HandDetactor():
@@ -103,5 +106,28 @@ class HandDetactor():
                     cv2.circle(self.webcam_image, (center_x, center_y), 20, (255, 0, 255), cv2.FILLED)
         except:
             return Exception("Failed to locate the circle of selected point on hand")
+    
+    def draw_volume_bar(self):
+        '''
+        This function draw a volume bar\n
+        
+        Returns:
+            minimum_volume : The minimum volume range
+            maximum_volume : The maximum volume range
+        '''
+        try:
+            devices = AudioUtilities.GetSpeakers()
+            interface = devices.Activate(
+                IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+            volume = cast(interface, POINTER(IAudioEndpointVolume))
+            volume_range = volume.GetVolumeRange()
+            volume.SetMasterVolumeLevel(0, None)
+
+            minimum_volume = volume_range[0]
+            maximum_volume = volume_range[1]
+
+            return minimum_volume, maximum_volume
+        except:
+            return Exception("Failed to draw a volume bar")
 
 
