@@ -31,6 +31,6 @@ class SNSChart():
         mode = dataset[target_column_for_mode].mode()[0]
         sns.histplot(x=target_column_for_data_chart, data=dataset, bins=[i for i in range(min_value, max_value, offset)])
         plt.plot([mode for i in range(0, 300)], [i for i in range(0, 300)], c="green")
-        plt.show()
+        plt.show() 
 
     
