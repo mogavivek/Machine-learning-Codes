@@ -7,6 +7,7 @@ from sklearn.linear_model import Lasso
 from sklearn import metrics
 import Machine_Learning_algorithms_data.data_information as data_info
 import Machine_Learning_algorithms_data.mahine_learning_algorithm as ml_algorithm
+from typing import Self
 
 #Now loading the data from csv file
 file_path = "C:\\Users\\vivek\\PycharmProjects\\pythonProject\\Vivekcode\\Machine-learning-Codes\\data-set\\car data.csv"

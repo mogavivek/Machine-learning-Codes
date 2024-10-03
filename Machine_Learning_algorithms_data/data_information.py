@@ -41,3 +41,16 @@ class DataDescription():
         """
         sns.countplot(x='{}'.format(column_name_1), hue='{}'.format(column_name_2), data=dataset)
         plt.show()
+    
+    def fill_na_with_mean_values_of_selected_column(self, dataset:tuple, column_name:str):
+        """This function fill the null values with the mean values\n
+        Arguments:
+              dataset : dataset in csv format
+              column_name : It takes the string value, The name of the column which want to replace null values with mean      
+        """
+        df = pd.read_csv(self.csv_file_path)
+        df[column_name].fillna(df[column_name].mean(), inplace=True)
+
+
+
+
