@@ -42,10 +42,9 @@ class DataDescription():
         sns.countplot(x='{}'.format(column_name_1), hue='{}'.format(column_name_2), data=dataset)
         plt.show()
     
-    def fill_na_with_mean_values_of_selected_column(self, dataset:tuple, column_name:str):
+    def fill_na_with_mean_values_of_selected_column(self, column_name:str):
         """This function fill the null values with the mean values\n
         Arguments:\n
-              dataset : dataset in csv format
               column_name : It takes the string value, The name of the column which want to replace null values with mean      
         """
         df = pd.read_csv(self.csv_file_path)
@@ -108,6 +107,72 @@ class DataDescription():
         df = pd.read_csv(self.csv_file_path)
         percentile_range_value = np.percentile(df[column_name], percentile_value)
         return percentile_range_value
+    
+    def check_skewness(self, column_name:str)->float:
+        """
+        This function check the skewness the target column
+        If the value comes in negative then it is negative skewness and positive then positive skewness\n
+        If there are no skewness means normal skewness then it returns the zero value
+        Arguments:\n
+            column_name: It takes the string value, choose the column from dataset
+        Return:\n
+            skewness: It returns the float values
+        """
+        df = pd.read_csv(self.csv_file_path)
+        skewness = df[column_name].skew()
+        return skewness
+
+    def check_correlation_of_dataset(self, float_datatypes:str, int_datatypes:str)->tuple:
+        """
+        This function check the correlation where if the correlation is 1 to 0 then it is positive correlation\n
+        If the value is 0 then neutral correlation and if the value lies between 0 to -1 then negative correlation\n 
+        positive correlation if x value increase then y will also increase, vice-versa for negative correlation\n
+        If the value x is increasing or decreasing, but the y is not changing then it is neutral\n
+        Arguments:\n
+            float_datatypes : first check in the dataset which types of float values are float64, float32
+            int_datatypes : first check in the dataset which types of int values are int64, int32
+        """
+        df = pd.read_csv(self.csv_file_path)
+        data_corr = df.select_dtypes([float_datatypes, int_datatypes]).corr()
+        return data_corr
+    
+    def check_covariance_of_dataset(self, float_datatypes:str, int_datatypes:str)->tuple:
+        """
+        This function check the covariance where
+        Arguments:\n
+            float_datatypes : first check in the dataset which types of float values are float64, float32
+            int_datatypes : first check in the dataset which types of int values are int64, int32
+        """
+        df = pd.read_csv(self.csv_file_path)
+        data_cova = df.select_dtypes([float_datatypes, int_datatypes]).cov()
+        return data_cova
+
+    def apply_method_central_limit_theorem(self, column_name:str, number_of_sample_want:int, ten_percent_of_data_value:int)->list[float]:
+        """
+        This function convert the non-normal-distributed data to normal-distribution data with the help of\n
+        central limit theorem and plot in the graph\n
+        Arguments:\n
+            column_name: It takes the string value, choose the column from dataset
+            number_of_sample_want : It takes the integer value, means if you want to take 50 samples from your data then give 50
+            ten_percent_of_data_value : It takes the integer value, it should be more than 30 and 10% of your len(column_name)
+        """
+        df = pd.read_csv(self.csv_file_path)
+        data_mean = np.mean(df[column_name])
+        sample_mean = []
+        for i in range(number_of_sample_want):
+            sample_data = []
+            for data in range(ten_percent_of_data_value):
+                sample_data.append(np.random.choice(df[column_name]))
+            sample_mean.append(np.mean(sample_data))
+        
+        sample_M = pd.DataFrame({"Sample_Mean": sample_mean})
+        sample_data_mean = np.mean(sample_mean)
+        print("The population data and sample data mean should be similar or near to each other")
+        print(f"The population data mean is: {data_mean} and the sample data mean is {sample_data_mean}")
+        plt.figure(figsize=(4, 3))
+        sns.kdeplot(x="Sample_Mean", data=sample_M)
+        plt.show()
+    
 
 
 

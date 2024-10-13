@@ -68,6 +68,15 @@ class SNSChart():
         plt.scatter(column_name_2, label=second_name)
         plt.plot([mean for i in range(1, row)], row, c="blue", label="mean")
         plt.show()
+    
+    def check_correlation_or_covariance_graph(self, dataset_correlation:tuple)->None:
+        """This function check the correlation graph of selected dataset\n
+        Argument:
+            dataset_correlation : It takes the input of correlation or covariance dataset
+        """
+        plt.figure(figsize=(4, 3))
+        sns.heatmap(dataset_correlation, annot=True)
+        plt.show()
 
 
 
