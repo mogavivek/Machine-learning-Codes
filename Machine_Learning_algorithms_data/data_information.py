@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import scipy.stats as st, chi2
 
 class DataDescription():
 
@@ -172,6 +173,119 @@ class DataDescription():
         plt.figure(figsize=(4, 3))
         sns.kdeplot(x="Sample_Mean", data=sample_M)
         plt.show()
+
+    def calculate_z_test_one_data(self, sample_mean:float, population_data_mean:float, population_data_standard_deviation:float, number_of_sample:int, alpha_value:float)->None:
+        """
+        This function calculate the Z test and gives the Ho or Ha is right\n
+        Arguments:\n
+            sample_mean : It takes the float value, sample data mean
+            population_data_mean : It takes the float value, mean of whole data
+            population_data_standard_deviation : It takes the float value as an input
+            number_of_sample : number of sample data (should be greater then 30)
+            alpha_value : It takes the float value as an input, value should be in-between 0 to 1
+        """
+        z_cal = (sample_mean-population_data_mean)/(population_data_standard_deviation/np.sqrt(number_of_sample))
+
+        z_table = st.norm.ppf(1-alpha_value)
+        if(z_table < z_cal):
+            print("Ha is right")
+        print("Ho is right")
+    
+    def calculate_z_test_two_data(self, sample_mean_one:float, sample_mean_two:float, population_data_mean_first:float, population_data_mean_second:float, population_data_std_first:float, population_data_std_second:float, number_of_sample_first:int, number_of_sample_second:int, alpha_value:float)->None:
+        """
+        This function calculate the Z test and gives the Ho or Ha is right\n
+        Arguments:\n
+            sample_mean_one : It takes the float value, sample data mean of first data
+            sample_mean_two : It takes the float value, sample data mean of second data
+            population_data_mean_first : It takes the float value, mean of whole data of first data
+            population_data_mean_second : It takes the float value, mean of whole data of second data
+            population_data_std_first : It takes the float value as an input
+            population_data_std_second : It takes the float value as an input
+            number_of_sample_first : number of sample data (should be greater then 30)
+            number_of_sample_second : number of sample data (should be greater then 30)
+            alpha_value : It takes the float value as an input, value should be in-between 0 to 1
+        """
+        z_cal = ((sample_mean_one-sample_mean_two)-(population_data_mean_first-population_data_mean_second))/((population_data_std_first+population_data_std_second)/np.sqrt((number_of_sample_first+number_of_sample_second)))
+
+        z_table = st.norm.ppf(1-alpha_value)
+        if(z_table < z_cal):
+            print("Ha is right")
+        print("Ho is right")
+    
+    def calculate_t_test_one_data(self, sample_mean:float, population_data_mean:float, population_data_standard_deviation:float, number_of_sample:int, alpha_value:float)->None:
+        """
+        This function calculate the Z test and gives the Ho or Ha is right\n
+        Arguments:\n
+            sample_mean : It takes the float value, sample data mean
+            population_data_mean : It takes the float value, mean of whole data
+            population_data_standard_deviation : It takes the float value as an input
+            number_of_sample : number of sample data (should be greater then 30)
+            alpha_value : It takes the float value as an input, value should be in-between 0 to 1
+        """
+        degree_of_freedom:int = number_of_sample-1
+        t_cal = (sample_mean-population_data_mean)/(population_data_standard_deviation/np.sqrt(number_of_sample))
+
+        t_table = st.norm.ppf(alpha_value, degree_of_freedom)
+        if(t_table < t_cal):
+            print("Ha is right")
+        print("Ho is right")
+    
+    def calculate_t_test_two_data(self, sample_mean_one:float, sample_mean_two:float, population_data_mean_first:float, population_data_mean_second:float, population_data_std_first:float, population_data_std_second:float, alpha_value:float, number_of_sample_first:int, number_of_sample_second:int=0, number_of_sample_coming_from_two_different_teams:bool=False)->None:
+        """
+        This function calculate the Z test and gives the Ho or Ha is right\n
+        Arguments:\n
+            sample_mean_one : It takes the float value, sample data mean of first data
+            sample_mean_two : It takes the float value, sample data mean of second data
+            population_data_mean_first : It takes the float value, mean of whole data of first data
+            population_data_mean_second : It takes the float value, mean of whole data of second data
+            population_data_std_first : It takes the float value as an input
+            population_data_std_second : It takes the float value as an input
+            alpha_value : It takes the float value as an input, value should be in-between 0 to 1
+            number_of_sample_first : number of sample data (should be greater then 30)
+            number_of_sample_second (Optional) : number of sample data (should be greater then 30)
+            number_of_sample_coming_from_two_different_teams (Optional) : It takes the boolean as an input, if number of people or data coming from two different teams then True else False (ByDefault)
+        """
+        if(number_of_sample_coming_from_two_different_teams):
+            degree_of_freedom:int = number_of_sample_first+number_of_sample_second-2
+        degree_of_freedom:int = number_of_sample_first-1
+        t_cal = ((sample_mean_one-sample_mean_two)-(population_data_mean_first-population_data_mean_second))/((population_data_std_first+population_data_std_second)/np.sqrt((number_of_sample_first+number_of_sample_second)))
+        alpha_value = alpha_value/2
+        t_table = st.norm.ppf(1-alpha_value, degree_of_freedom)
+        if(t_table < t_cal):
+            print("Ha is right")
+        print("Ho is right")
+
+    def calculate_chi_square_test(self, alpha_value, number_of_row_value:int, number_of_column_value:int, first_data:tuple, second_data:tuple)->None:
+        """
+        This function calculate the chi square test value of the data\n
+        Arguments:\n
+            alpha_value : It takes the float value as an input, value should be in-between 0 to 1
+            number_of_row_value : It takes the integer as an input, number of rows of both data, generally 2 will be there
+            number_of_column_value : It takes the integer as an input, number of rows of both data, means have to count from just one data is enough, because second also have same
+            first_data : It takes the array as an input, first data all row values
+            second_data : It takes the array as an input, second data all row values
+        """
+        sample_data = np.sum(first_data) + np.sum(second_data)
+        sum_row_one = np.sum(first_data)
+        sum_row_two = np.sum(second_data)
+        sum_row_array = np.array[sum_row_one, sum_row_two]
+        sum_column = first_data + second_data
+        expected_value = []
+        for i in sum_row_array:
+            print(i)
+            for j in sum_column:
+                value = (i*j)/sample_data
+                expected_value.append(value)
+        observation_value = np.array([first_data + second_data])
+        degree_of_freedom = (number_of_row_value-1)(number_of_column_value-1)
+        chi_table = chi2.ppf(1 - alpha_value, degree_of_freedom)        
+        chi_square_value = np.sum(np.square(observation_value-expected_value)/expected_value)
+        if(chi_table < chi_square_value):
+            print("Ha is right")
+        print("Ho is right")
+
+
+
     
 
 
