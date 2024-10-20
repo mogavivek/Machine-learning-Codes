@@ -77,6 +77,15 @@ class SNSChart():
         plt.figure(figsize=(4, 3))
         sns.heatmap(dataset_correlation, annot=True)
         plt.show()
+    
+    def check_null_values_in_sns_heatmap(self, dataset_is_null):
+        """
+        This function gives the sns heat map of available null values in dataset\n
+        Argument:\n
+            dataset_is_null : It takes the whole data set with null values presentation, e.g., dataset.isnull()
+        """
+        sns.heatmap(dataset_is_null)
+        plt.show()
 
 
 

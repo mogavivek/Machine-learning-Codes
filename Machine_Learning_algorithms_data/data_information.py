@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.stats as st, chi2
+from sklearn.impute import SimpleImputer
 
 class DataDescription():
 
@@ -18,15 +19,47 @@ class DataDescription():
             dataset_head = head values of the table\n
             dataset_describe = description of the dataset\n
             dataset_info = info of all columns as well as null values\n
-            dataset_null_values = total null values in that column\n
         '''
         df = pd.read_csv(self.csv_file_path)
         dataset_head = df.head()
         dataset_describe = df.describe()
         dataset_info = df.info()
-        dataset_null_values = df.isnull().sum()
+        
 
-        return df, dataset_head, dataset_describe, dataset_info, dataset_null_values
+        return df, dataset_head, dataset_describe, dataset_info 
+    
+    def check_null_values_description_in_dataset(self):
+        """
+        This function check the null values an provides different overview\n
+        Return:\n
+            dataset_not_null_values : total not null values in that column
+            dataset_null_values : total null values in that column
+            dataset_null_values_percentage : It returns the percentage of null values available in column, this useful to remove the column if there are more percentage of null values
+            dataset_total_null_values : It gives total number of null values available in dataset
+            dataset_total_null_values_percentage : It gives percentage of total number of null values available in dataset
+        """
+        df = pd.read_csv(self.csv_file_path)
+        dataset_not_null_values = df.notnull().sum()
+        dataset_null_values = df.isnull().sum()
+        dataset_null_values_percentage = (df.isnull().sum()/df.shape[0])*100
+        dataset_total_null_values = df.isnull().sum().sum()
+        dataset_total_null_values_percentage = (dataset_total_null_values/(df.shape[0]*df.shape[1]))*100
+
+        return dataset_not_null_values, dataset_null_values, dataset_null_values_percentage, dataset_total_null_values, dataset_total_null_values_percentage
+    
+    def drop_column_from_dataset(self, target_columns:tuple)->None:
+        """
+        This function drop the column from the dataset\n
+        Argument:\n
+            target_columns : provide one column then ["one"], if more columns then ["one", "two"]
+        """
+        df = pd.read_csv(self.csv_file_path)
+        df.drop(columns=target_columns, inplace=True) #It will replace in existing dataset
+    
+    def drop_null_values_from_dataset(self, target_columns:tuple)->None:
+        """This function drop the null values from the dataset"""
+        df = pd.read_csv(self.csv_file_path)
+        df.dropna(inplace=True) #It will replace in existing dataset
     
     def plot_classification_in_seaborn(dataset, column_name_1, column_name_2):
         """
@@ -43,13 +76,53 @@ class DataDescription():
         sns.countplot(x='{}'.format(column_name_1), hue='{}'.format(column_name_2), data=dataset)
         plt.show()
     
-    def fill_na_with_mean_values_of_selected_column(self, column_name:str):
+    def get_only_object_type_dataset_null_value_info(self, data_type:str):
+        """
+        This function get the dataset of only object type dataset\n
+        Argument:\n
+            data_type : It takes the string value as an input, from the dataset info take require value e.g., object, float64, int
+        Return:\n
+            dataset_object_type_null_values : It give the information of all object type dataset with null values total
+        """
+        df = pd.read_csv(self.csv_file_path)
+        dataset_object_type_null_values = df.select_dtypes(include=data_type).isnull().sum()
+        return dataset_object_type_null_values
+    
+    def fill_na_with_mean_values_of_selected_column(self, column_name:str)->None:
         """This function fill the null values with the mean values\n
         Arguments:\n
               column_name : It takes the string value, The name of the column which want to replace null values with mean      
         """
         df = pd.read_csv(self.csv_file_path)
         df[column_name].fillna(df[column_name].mean(), inplace=True)
+    
+    def fill_na_with_mode_values_of_selected_column(self, column_name:str=str(), more_then_one_column:bool=False)->None:
+        """
+        This function fill the null values with the mode values and mostly use for categorical column\n
+        Arguments:\n
+            column_name (optional) : It takes the string value, The name of the column which want to replace null values with mean      
+            more_then_one_column (Optional) : It takes the boolean value, if replace mode with all columns the True else False (ByDefault)
+        """
+        df = pd.read_csv(self.csv_file_path)
+        if more_then_one_column is False:
+            df[column_name].fillna(df[column_name].mode()[0], inplace=True)
+        else:
+            for i in df.select_dtypes(include="object").columns:
+                df[i].fillna(df[i].mode()[0], inplace=True).isnull().sum()
+    
+    def backward_or_forward_filling(self, backward_filling:bool = True)->None:
+        """
+        This function fill the backward or forward filling from the next row box
+        Mostly this function use for the categorical dataset column\n
+        Argument:
+            backward_filling (Optional) : It takes the boolean value backward filling then True (ByDefault) else False for forward filling 
+        """
+        if backward_filling:
+            fill = "bfill"
+        else:
+            fill = "ffill"
+        df = pd.read_csv(self.csv_file_path)
+        df.fillna(method=fill)
     
     def get_min_and_max_value_from_data(self, target_column:str)->tuple[float, float]:
         """
